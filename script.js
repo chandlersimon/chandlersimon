@@ -330,6 +330,17 @@ const getProjectSheetAssets = (project = {}) => {
   return buildCoverFallbackAssets(project);
 };
 
+const getProjectPreviewAsset = (project = {}) => {
+  if (Array.isArray(project.gallery) && project.gallery.length) {
+    return project.gallery[0];
+  }
+  if (Array.isArray(project.sheetGallery) && project.sheetGallery.length) {
+    return project.sheetGallery[0];
+  }
+  const fallbackAssets = buildCoverFallbackAssets(project);
+  return fallbackAssets.length ? fallbackAssets[0] : null;
+};
+
 const getConfiguredAssetAspectRatio = (asset = {}) => {
   if (Number.isFinite(asset.aspectRatio) && asset.aspectRatio > 0) {
     return asset.aspectRatio;
@@ -723,14 +734,40 @@ const createCard = (project, index) => {
   card.dataset.span = project.span || '1x1';
 
   const overview = document.createElement('div');
-  overview.className = 'overview';
+  overview.className = 'overview is-loading';
 
-  const primaryMedia = project.gallery?.[0];
+  const previewAsset = getProjectPreviewAsset(project);
+  const applyAspectRatio = (ratio) => {
+    if (Number.isFinite(ratio) && ratio > 0) {
+      overview.style.setProperty('--card-media-aspect', String(ratio));
+    }
+  };
+  applyAspectRatio(getAssetAspectRatio(previewAsset || {}));
+  if (previewAsset) {
+    ensureAssetAspectRatio(previewAsset).then((ratio) => applyAspectRatio(ratio));
+  }
+
+  const markMediaLoaded = () => {
+    overview.classList.remove('is-loading');
+  };
 
   const appendMedia = (media) => {
     if (!media) return false;
     if (media.type === 'video' && Array.isArray(media.sources) && media.sources.length) {
       const video = createVideoElement(media.sources, media.poster);
+      video.addEventListener(
+        'loadedmetadata',
+        () => {
+          const width = video.videoWidth;
+          const height = video.videoHeight;
+          if (width && height) {
+            applyAspectRatio(Number((width / height).toFixed(6)));
+          }
+        },
+        { once: true }
+      );
+      video.addEventListener('loadeddata', markMediaLoaded, { once: true });
+      video.addEventListener('error', markMediaLoaded, { once: true });
       overview.appendChild(video);
       return true;
     }
@@ -738,21 +775,30 @@ const createCard = (project, index) => {
       const img = document.createElement('img');
       img.src = media.src;
       img.alt = media.alt || project.alt;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+      const finalizeImage = () => {
+        if (img.naturalWidth && img.naturalHeight) {
+          applyAspectRatio(Number((img.naturalWidth / img.naturalHeight).toFixed(6)));
+        }
+        markMediaLoaded();
+      };
+      if (img.complete) {
+        finalizeImage();
+      } else {
+        img.addEventListener('load', finalizeImage, { once: true });
+      }
+      img.addEventListener('error', markMediaLoaded, { once: true });
       overview.appendChild(img);
       return true;
     }
     return false;
   };
 
-  if (!appendMedia(primaryMedia)) {
-    if (project.cover && project.cover.toLowerCase().match(/\\.(mp4|mov|webm|m4v)$/)) {
-      const fallbackVideo = createVideoElement([{ src: project.cover, type: 'video/mp4' }], null);
-      overview.appendChild(fallbackVideo);
-    } else {
-      const img = document.createElement('img');
-      img.src = project.cover;
-      img.alt = project.alt;
-      overview.appendChild(img);
+  if (!appendMedia(previewAsset)) {
+    const fallbackAssets = buildCoverFallbackAssets(project);
+    if (!fallbackAssets.length || !appendMedia(fallbackAssets[0])) {
+      markMediaLoaded();
     }
   }
 
