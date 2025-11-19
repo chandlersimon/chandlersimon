@@ -681,6 +681,10 @@ const initGsapEffects = () => {
 
   const cardOverviews = Array.from(document.querySelectorAll('.project-card .overview'));
   if (!cardOverviews.length) return;
+
+  // Detect if device likely has touch input (mobile/tablet)
+  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
   cardOverviews.forEach((overview) => {
     const media = overview.querySelector('img, video') || overview;
     const cardElement = overview.closest('.project-card');
@@ -700,7 +704,7 @@ const initGsapEffects = () => {
             trigger: overview,
             start: startValue,
             end: endValue,
-            scrub: 0.6
+            scrub: isTouchDevice ? false : 0.6  // Disable scrub on mobile for smooth scrolling
           }
         }
       );
