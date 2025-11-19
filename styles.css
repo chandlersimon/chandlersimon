@@ -370,7 +370,6 @@ main {
   display: block;
   width: 100%;
   aspect-ratio: var(--card-media-aspect, 4 / 3);
-  overflow: hidden;
   border-radius: 0;
 }
 
