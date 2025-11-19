@@ -1113,7 +1113,6 @@ const debouncedGsapEffects = debounce(() => {
 }, 200);
 
 window.addEventListener('resize', debouncedGsapEffects);
-window.addEventListener('scroll', debouncedGsapEffects, { passive: true });
 
 const init = async () => {
   window.scrollTo(0, 0);
