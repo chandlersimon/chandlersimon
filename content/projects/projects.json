@@ -1,0 +1,64 @@
+{
+  "projects": [
+    {
+      "title": "Dot Search",
+      "description": "An alternate search experience. Type your query then hover on the dots to reveal your results and discover pages you would normally overlook.",
+      "detailText": "*People:* Ryan Stephen *Time:* 2 day sprint *Year:* 2024  *Link:*View Here (https://dotsearch.superrandom.studio)"
+    },
+    {
+      "title": "Venngenn",
+      "description": "Venn diagrams meet AI image generation. Mix styles and environments, and see your image change where they intersect.",
+      "detailText": "*People:* Ryan Stephen *Time:* 3 day sprint *Year:* 2025 *Link:*View Here (https://venngenn.superrandom.studio)"
+    },
+    {
+      "title": "Mold Studios",
+      "description": "Creating candles by manufacturaing reusable 3D-printed molds. Each candle was hand-poured and cast from a CAD model.",
+      "detailText": "*People:* Adrianna Varela,\nJohn Peterson,\nKade Eckert  *Time:* 12 Weeks *Year:* 2020"
+
+    },
+    {
+      "title": "Perfect Coffee Water",
+      "description": "A scalable brand identity and packaging system for Perfect Coffee Water, a specialty coffee brand focused on better water for better coffee. Their mineral blend enhances every brew, bringing out greater flavor and balance in each cup.",
+      "detailText": "*People:* Garrett King,\nCourtland King *Year:* 2022 *Role:*Freelance Design,\nPackaging Design,\nBrand Identity"
+    },
+    {
+      "title": "Spatial Explorations",
+      "description": "A collection of speculative prototypes exploring interfaces for augmented reality. Each concept explores spatial experiences from a handheld map that wraps around your wrist, to a 3D-print preview showing scale in context, to an augmented scroll that slows social media use, and a playful blend of real-world pool and video game physics.",
+      "detailText": "*People:* Ryan Stephen *Time:* 1 day sprint *Year:* 2023"
+
+    },
+    {
+      "title": "Public Read Receipts",
+      "description": "A live chat that obfuscates every user’s message through an AI-generated layer to match a daily “POV.” The project explores how meaning and intent shift when conversations are filtered through automated reinterpretation and how people begin to adapt or play into the role.",
+      "detailText": "*People* Ryan Stephen *Time* 5 Day sprint *Year* 2025 *Link:*View Here (https://chat.superrandom.studio)"
+    },
+    {
+      "title": "Internet Garden",
+      "description": "Coming soon."
+    },
+    {
+      "title": "Stickers",
+      "description": "Coming soon."
+    },
+    {
+      "title": "Ping Pong",
+      "description": "Coming soon."
+    },
+    {
+      "title": "Sensol Systems",
+      "description": "Coming soon."
+    },
+    {
+      "title": "Speaker",
+      "description": "Coming soon."
+    },
+    {
+      "title": "Super Random",
+      "description": "Coming soon."
+    },
+    {
+      "title": "Unfold",
+      "description": "Coming soon."
+    }
+  ]
+}
