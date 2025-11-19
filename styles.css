@@ -371,7 +371,6 @@ main {
   width: 100%;
   aspect-ratio: var(--card-media-aspect, 4 / 3);
   overflow: hidden;
-  background: #f8fafc;
   border-radius: 0;
 }
 
