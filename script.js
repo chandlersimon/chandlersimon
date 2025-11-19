@@ -18,6 +18,7 @@ const CARD_BLUR_START = 100;
 const DEFAULT_SHEET_ROW_GAP = 10;
 const SHEET_PERCENTAGE_MIN = 1;
 const SHEET_PERCENTAGE_MAX = 100;
+const SHEET_PRELOAD_ASSET_LIMIT = 6;
 
 const clampNumber = (value, min, max) => {
   if (!Number.isFinite(value)) return null;
@@ -288,6 +289,96 @@ const formatProjectIdentifier = (project = {}) => {
     return `${cleanedLabel}: ${project.sheetTitle}`;
   }
   return cleanedLabel || project.sheetTitle || '';
+};
+
+const projectAssetPreloaders = new Map();
+const projectPreloadTimers = new Map();
+
+const buildCoverFallbackAssets = (project = {}) => {
+  const cover = project.cover;
+  if (!cover) return [];
+  const normalized = cover.toLowerCase();
+  if (normalized.match(/\.(mp4|mov|webm|m4v)$/)) {
+    return [
+      {
+        type: 'video',
+        autoplay: true,
+        loop: true,
+        muted: true,
+        sources: [{ src: cover, type: 'video/mp4' }]
+      }
+    ];
+  }
+  return [
+    {
+      type: 'image',
+      src: cover,
+      alt: project.alt
+    }
+  ];
+};
+
+const getProjectSheetAssets = (project = {}) => {
+  if (Array.isArray(project.sheetGallery) && project.sheetGallery.length) {
+    return project.sheetGallery;
+  }
+  if (Array.isArray(project.gallery) && project.gallery.length) {
+    return project.gallery;
+  }
+  return buildCoverFallbackAssets(project);
+};
+
+const preloadImageSource = (src) => {
+  if (!src) return Promise.resolve();
+  return new Promise((resolve) => {
+    const img = new Image();
+    const cleanup = () => {
+      img.onload = null;
+      img.onerror = null;
+      resolve();
+    };
+    img.onload = cleanup;
+    img.onerror = cleanup;
+    img.src = src;
+    if (img.complete) {
+      cleanup();
+    } else if (img.decode) {
+      img
+        .decode()
+        .then(cleanup)
+        .catch(cleanup);
+    }
+  });
+};
+
+const preloadProjectAssets = (project, { limit = SHEET_PRELOAD_ASSET_LIMIT } = {}) => {
+  if (!project?.id) return Promise.resolve(project);
+  if (projectAssetPreloaders.has(project.id)) {
+    return projectAssetPreloaders.get(project.id);
+  }
+  if (projectPreloadTimers.has(project.id)) {
+    clearTimeout(projectPreloadTimers.get(project.id));
+    projectPreloadTimers.delete(project.id);
+  }
+  const assets = getProjectSheetAssets(project).slice(0, limit);
+  const preloadPromises = assets
+    .filter((asset) => asset?.type === 'image' && asset?.src)
+    .map((asset) => preloadImageSource(asset.src));
+  const preloadPromise = Promise.all(preloadPromises).then(() => project);
+  projectAssetPreloaders.set(project.id, preloadPromise);
+  return preloadPromise;
+};
+
+const scheduleProjectPreload = (project, delay = 120) => {
+  if (!project?.id) return;
+  if (projectAssetPreloaders.has(project.id) || projectPreloadTimers.has(project.id)) {
+    return;
+  }
+  const timerId = window.setTimeout(() => {
+    projectPreloadTimers.delete(project.id);
+    preloadProjectAssets(project);
+  }, delay);
+  projectPreloadTimers.set(project.id, timerId);
 };
 
 const normalizeProject = (config = {}, index = 0) => {
@@ -608,7 +699,15 @@ const updateInlineVideos = () => {
 const renderGallery = () => {
   galleryGrid.innerHTML = '';
   projects.forEach((project, index) => {
-    galleryGrid.appendChild(createCard(project, index));
+    const card = createCard(project, index);
+    const warmProjectAssets = () => scheduleProjectPreload(project);
+    card.addEventListener('mouseenter', warmProjectAssets);
+    card.addEventListener('focusin', warmProjectAssets);
+    card.addEventListener('touchstart', warmProjectAssets, { passive: true });
+    if (index < 2) {
+      scheduleProjectPreload(project, index === 0 ? 0 : 80);
+    }
+    galleryGrid.appendChild(card);
   });
   updateInlineVideos();
   const mediaElements = Array.from(
@@ -665,15 +764,7 @@ const fillSheet = (project) => {
   }
 
   sheetGallery.innerHTML = '';
-  const primaryGallery = project.sheetGallery?.length ? project.sheetGallery : project.gallery;
-  const assets =
-    primaryGallery?.length && Array.isArray(primaryGallery)
-      ? primaryGallery
-      : project.cover
-      ? project.cover.toLowerCase().match(/\\.(mp4|mov|webm|m4v)$/)
-        ? [{ type: 'video', sources: [{ src: project.cover, type: 'video/mp4' }] }]
-        : [{ type: 'image', src: project.cover, alt: project.alt }]
-      : [];
+  const assets = getProjectSheetAssets(project);
 
   if (!assets.length) {
     const empty = document.createElement('p');
@@ -750,6 +841,7 @@ const fillSheet = (project) => {
 };
 
 const openProject = (project) => {
+  preloadProjectAssets(project);
   fillSheet(project);
   resetSheetScrollPosition();
   if (sheetHideTimeout) {
