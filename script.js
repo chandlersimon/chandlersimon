@@ -19,6 +19,7 @@ const DEFAULT_SHEET_ROW_GAP = 10;
 const SHEET_PERCENTAGE_MIN = 1;
 const SHEET_PERCENTAGE_MAX = 100;
 const SHEET_PRELOAD_ASSET_LIMIT = 6;
+const DEFAULT_SHEET_ASPECT_RATIO = 4 / 3;
 
 const clampNumber = (value, min, max) => {
   if (!Number.isFinite(value)) return null;
@@ -293,6 +294,7 @@ const formatProjectIdentifier = (project = {}) => {
 
 const projectAssetPreloaders = new Map();
 const projectPreloadTimers = new Map();
+const videoMetadataCache = new Map();
 
 const buildCoverFallbackAssets = (project = {}) => {
   const cover = project.cover;
@@ -328,6 +330,94 @@ const getProjectSheetAssets = (project = {}) => {
   return buildCoverFallbackAssets(project);
 };
 
+const getConfiguredAssetAspectRatio = (asset = {}) => {
+  if (Number.isFinite(asset.aspectRatio) && asset.aspectRatio > 0) {
+    return asset.aspectRatio;
+  }
+  if (Number.isFinite(asset?.layout?.aspectRatio) && asset.layout.aspectRatio > 0) {
+    return asset.layout.aspectRatio;
+  }
+  return null;
+};
+
+const getAssetAspectRatio = (asset = {}) => {
+  return getConfiguredAssetAspectRatio(asset) ?? DEFAULT_SHEET_ASPECT_RATIO;
+};
+
+const getPrimaryVideoSource = (asset = {}) => {
+  if (!Array.isArray(asset?.sources)) return null;
+  const candidate = asset.sources.find((source) => source?.src);
+  return candidate?.src || null;
+};
+
+const preloadVideoMetadata = (src) => {
+  if (!src) return Promise.resolve(null);
+  if (videoMetadataCache.has(src)) {
+    return videoMetadataCache.get(src);
+  }
+  const probePromise = new Promise((resolve) => {
+    const video = document.createElement('video');
+    const cleanup = () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('error', handleError);
+      video.pause();
+      video.removeAttribute('src');
+      try {
+        video.load();
+      } catch (error) {
+        // ignore load errors from cleanup
+      }
+    };
+    const handleLoadedMetadata = () => {
+      const width = video.videoWidth;
+      const height = video.videoHeight;
+      cleanup();
+      if (width && height) {
+        resolve(Number((width / height).toFixed(6)));
+      } else {
+        resolve(null);
+      }
+    };
+    const handleError = () => {
+      cleanup();
+      resolve(null);
+    };
+    video.preload = 'metadata';
+    video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
+    video.addEventListener('error', handleError, { once: true });
+    video.src = src;
+    try {
+      video.load();
+    } catch (error) {
+      handleError();
+    }
+  });
+  videoMetadataCache.set(src, probePromise);
+  return probePromise;
+};
+
+const ensureAssetAspectRatio = (asset) => {
+  if (!asset) return Promise.resolve(null);
+  const existingRatio = getConfiguredAssetAspectRatio(asset);
+  if (Number.isFinite(existingRatio) && existingRatio > 0) {
+    asset.aspectRatio = existingRatio;
+    return Promise.resolve(existingRatio);
+  }
+  if (asset?.type === 'video') {
+    const src = getPrimaryVideoSource(asset);
+    if (!src) {
+      return Promise.resolve(null);
+    }
+    return preloadVideoMetadata(src).then((ratio) => {
+      if (Number.isFinite(ratio) && ratio > 0) {
+        asset.aspectRatio = ratio;
+      }
+      return asset.aspectRatio ?? null;
+    });
+  }
+  return Promise.resolve(null);
+};
+
 const preloadImageSource = (src) => {
   if (!src) return Promise.resolve();
   return new Promise((resolve) => {
@@ -361,9 +451,13 @@ const preloadProjectAssets = (project, { limit = SHEET_PRELOAD_ASSET_LIMIT } = {
     projectPreloadTimers.delete(project.id);
   }
   const assets = getProjectSheetAssets(project).slice(0, limit);
-  const preloadPromises = assets
-    .filter((asset) => asset?.type === 'image' && asset?.src)
-    .map((asset) => preloadImageSource(asset.src));
+  const preloadPromises = [];
+  assets.forEach((asset) => {
+    if (asset?.type === 'image' && asset?.src) {
+      preloadPromises.push(preloadImageSource(asset.src));
+    }
+    preloadPromises.push(ensureAssetAspectRatio(asset));
+  });
   const preloadPromise = Promise.all(preloadPromises).then(() => project);
   projectAssetPreloaders.set(project.id, preloadPromise);
   return preloadPromise;
@@ -790,7 +884,13 @@ const fillSheet = (project) => {
 
     row.assets.forEach((asset, columnIndex) => {
       const figure = document.createElement('figure');
-      figure.className = 'project-sheet__figure';
+      figure.className = 'project-sheet__figure is-loading';
+      const aspectRatio = getAssetAspectRatio(asset);
+      figure.style.setProperty('--sheet-asset-aspect', String(aspectRatio));
+
+      const markMediaLoaded = () => {
+        figure.classList.remove('is-loading');
+      };
 
       if (asset?.type === 'video' && Array.isArray(asset.sources)) {
         const video = document.createElement('video');
@@ -802,6 +902,7 @@ const fillSheet = (project) => {
         video.playsInline = true;
         video.loop = shouldLoop;
         video.controls = controlsPreference;
+        video.preload = asset.preload || 'metadata';
 
         if (shouldAutoplay) {
           video.autoplay = true;
@@ -820,12 +921,47 @@ const fillSheet = (project) => {
           if (source.type) sourceEl.type = source.type;
           video.appendChild(sourceEl);
         });
+        video.addEventListener(
+          'loadedmetadata',
+          () => {
+            const width = video.videoWidth;
+            const height = video.videoHeight;
+            if (width && height) {
+              const ratio = Number((width / height).toFixed(6));
+              asset.aspectRatio = ratio;
+              figure.style.setProperty('--sheet-asset-aspect', String(ratio));
+            }
+          },
+          { once: true }
+        );
+        video.addEventListener('loadeddata', markMediaLoaded, { once: true });
+        video.addEventListener('error', markMediaLoaded, { once: true });
         figure.appendChild(video);
       } else if (asset?.src) {
         const img = document.createElement('img');
         img.src = asset.src;
         img.alt = asset.alt || `${project.title} asset ${assetSequence + 1}`;
+        img.loading = 'lazy';
+        img.decoding = 'async';
+        img.addEventListener(
+          'load',
+          () => {
+            if (img.naturalWidth && img.naturalHeight && !Number.isFinite(asset.aspectRatio)) {
+              const ratio = Number((img.naturalWidth / img.naturalHeight).toFixed(6));
+              asset.aspectRatio = ratio;
+              figure.style.setProperty('--sheet-asset-aspect', String(ratio));
+            }
+            markMediaLoaded();
+          },
+          { once: true }
+        );
+        img.addEventListener('error', markMediaLoaded, { once: true });
+        if (img.complete) {
+          markMediaLoaded();
+        }
         figure.appendChild(img);
+      } else {
+        markMediaLoaded();
       }
 
       const widthValue = clampNumber(row.widths?.[columnIndex], 1, 100);

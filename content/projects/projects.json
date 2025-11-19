@@ -19,7 +19,8 @@
               "src": "assets/projects/dot-search/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
@@ -33,7 +34,8 @@
               "src": "assets/projects/dot-search/sheet-assets/1.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1.777778
         },
         {
           "type": "video",
@@ -45,7 +47,8 @@
               "src": "assets/projects/dot-search/sheet-assets/2.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         }
       ]
     },
@@ -68,7 +71,8 @@
               "src": "assets/projects/venngenn/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
@@ -82,27 +86,32 @@
               "src": "assets/projects/venngenn/sheet-assets/1.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/venngenn/sheet-assets/2_50_A.png",
-          "alt": "Venngenn asset 2"
+          "alt": "Venngenn asset 2",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/venngenn/sheet-assets/2_50_B.png",
-          "alt": "Venngenn asset 3"
+          "alt": "Venngenn asset 3",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/venngenn/sheet-assets/3_50_A.png",
-          "alt": "Venngenn asset 4"
+          "alt": "Venngenn asset 4",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/venngenn/sheet-assets/3_50_B.png",
-          "alt": "Venngenn asset 5"
+          "alt": "Venngenn asset 5",
+          "aspectRatio": 1
         },
         {
           "type": "video",
@@ -114,7 +123,8 @@
               "src": "assets/projects/venngenn/sheet-assets/4.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1.572222
         }
       ]
     },
@@ -130,39 +140,46 @@
         {
           "type": "image",
           "src": "assets/projects/mold-studios/cover.jpg",
-          "alt": "Mold Studios asset"
+          "alt": "Mold Studios asset",
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
         {
           "type": "image",
           "src": "assets/projects/mold-studios/sheet-assets/1.jpg",
-          "alt": "Mold Studios asset 1"
+          "alt": "Mold Studios asset 1",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/mold-studios/sheet-assets/2_50_A.jpg",
-          "alt": "Mold Studios asset 2"
+          "alt": "Mold Studios asset 2",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/mold-studios/sheet-assets/2_50_B.jpg",
-          "alt": "Mold Studios asset 3"
+          "alt": "Mold Studios asset 3",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/mold-studios/sheet-assets/3_50_A.jpg",
-          "alt": "Mold Studios asset 4"
+          "alt": "Mold Studios asset 4",
+          "aspectRatio": 1.000927
         },
         {
           "type": "image",
           "src": "assets/projects/mold-studios/sheet-assets/3_50_B.jpg",
-          "alt": "Mold Studios asset 5"
+          "alt": "Mold Studios asset 5",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/mold-studios/sheet-assets/4.jpg",
-          "alt": "Mold Studios asset 6"
+          "alt": "Mold Studios asset 6",
+          "aspectRatio": 1
         }
       ]
     },
@@ -185,39 +202,46 @@
               "src": "assets/projects/perfect-coffee-water/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 0.748148
         }
       ],
       "sheetGallery": [
         {
           "type": "image",
           "src": "assets/projects/perfect-coffee-water/sheet-assets/1.png",
-          "alt": "Perfect Coffee Water asset 1"
+          "alt": "Perfect Coffee Water asset 1",
+          "aspectRatio": 0.999451
         },
         {
           "type": "image",
           "src": "assets/projects/perfect-coffee-water/sheet-assets/2_50_A.jpg",
-          "alt": "Perfect Coffee Water asset 2"
+          "alt": "Perfect Coffee Water asset 2",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/perfect-coffee-water/sheet-assets/2_50_B.jpg",
-          "alt": "Perfect Coffee Water asset 3"
+          "alt": "Perfect Coffee Water asset 3",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/perfect-coffee-water/sheet-assets/3.jpeg",
-          "alt": "Perfect Coffee Water asset 4"
+          "alt": "Perfect Coffee Water asset 4",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/perfect-coffee-water/sheet-assets/4_50_A.jpg",
-          "alt": "Perfect Coffee Water asset 5"
+          "alt": "Perfect Coffee Water asset 5",
+          "aspectRatio": 1
         },
         {
           "type": "image",
           "src": "assets/projects/perfect-coffee-water/sheet-assets/4_50_B.png",
-          "alt": "Perfect Coffee Water asset 6"
+          "alt": "Perfect Coffee Water asset 6",
+          "aspectRatio": 1
         },
         {
           "type": "video",
@@ -229,7 +253,8 @@
               "src": "assets/projects/perfect-coffee-water/sheet-assets/5_33_A.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 0.5625
         },
         {
           "type": "video",
@@ -241,7 +266,8 @@
               "src": "assets/projects/perfect-coffee-water/sheet-assets/5_33_B.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 0.5625
         },
         {
           "type": "video",
@@ -253,12 +279,14 @@
               "src": "assets/projects/perfect-coffee-water/sheet-assets/5_33_C.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 0.5625
         },
         {
           "type": "image",
           "src": "assets/projects/perfect-coffee-water/sheet-assets/6.png",
-          "alt": "Perfect Coffee Water asset 10"
+          "alt": "Perfect Coffee Water asset 10",
+          "aspectRatio": 0.861538
         },
         {
           "type": "video",
@@ -270,17 +298,20 @@
               "src": "assets/projects/perfect-coffee-water/sheet-assets/7_40_B.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 0.5625
         },
         {
           "type": "image",
           "src": "assets/projects/perfect-coffee-water/sheet-assets/7_60_A.jpg",
-          "alt": "Perfect Coffee Water asset 12"
+          "alt": "Perfect Coffee Water asset 12",
+          "aspectRatio": 0.848896
         },
         {
           "type": "image",
           "src": "assets/projects/perfect-coffee-water/sheet-assets/8.jpeg",
-          "alt": "Perfect Coffee Water asset 13"
+          "alt": "Perfect Coffee Water asset 13",
+          "aspectRatio": 0.8
         }
       ]
     },
@@ -303,7 +334,8 @@
               "src": "assets/projects/spatial-explorations/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
@@ -317,7 +349,8 @@
               "src": "assets/projects/spatial-explorations/sheet-assets/1.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1.777778
         },
         {
           "type": "video",
@@ -329,7 +362,8 @@
               "src": "assets/projects/spatial-explorations/sheet-assets/2.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1.777778
         },
         {
           "type": "video",
@@ -341,7 +375,8 @@
               "src": "assets/projects/spatial-explorations/sheet-assets/3.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1.777778
         },
         {
           "type": "video",
@@ -353,13 +388,14 @@
               "src": "assets/projects/spatial-explorations/sheet-assets/4.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1.777778
         }
       ]
     },
     {
       "title": "Public Read Receipts",
-      "description": "A live chat that obfuscates every user\u2019s message through an AI-generated layer to match a daily \u201cPOV.\u201d The project explores how meaning and intent shift when conversations are filtered through automated reinterpretation and how people begin to adapt or play into the role.",
+      "description": "A live chat that obfuscates every user’s message through an AI-generated layer to match a daily “POV.” The project explores how meaning and intent shift when conversations are filtered through automated reinterpretation and how people begin to adapt or play into the role.",
       "detailText": "*People* Ryan Stephen *Time* 5 Day sprint *Year* 2025 *Link:*View Here (https://chat.superrandom.studio)",
       "slug": "public-read-receipts",
       "alt": "Public Read Receipts asset",
@@ -376,7 +412,8 @@
               "src": "assets/projects/public-read-receipts/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
@@ -390,7 +427,8 @@
               "src": "assets/projects/public-read-receipts/sheet-assets/1.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         },
         {
           "type": "video",
@@ -402,7 +440,8 @@
               "src": "assets/projects/public-read-receipts/sheet-assets/2.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1.607407
         }
       ]
     },
@@ -424,14 +463,16 @@
               "src": "assets/projects/internet-garden/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
         {
           "type": "image",
           "src": "assets/projects/internet-garden/sheet-assets/1.png",
-          "alt": "Internet Garden asset 1"
+          "alt": "Internet Garden asset 1",
+          "aspectRatio": 1
         }
       ]
     },
@@ -446,14 +487,16 @@
         {
           "type": "image",
           "src": "assets/projects/stickers/cover.jpg",
-          "alt": "Stickers asset"
+          "alt": "Stickers asset",
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
         {
           "type": "image",
           "src": "assets/projects/stickers/sheet-assets/1.png",
-          "alt": "Stickers asset 1"
+          "alt": "Stickers asset 1",
+          "aspectRatio": 1
         }
       ]
     },
@@ -468,14 +511,16 @@
         {
           "type": "image",
           "src": "assets/projects/ping-pong/cover.jpg",
-          "alt": "Ping Pong asset"
+          "alt": "Ping Pong asset",
+          "aspectRatio": 1.454795
         }
       ],
       "sheetGallery": [
         {
           "type": "image",
           "src": "assets/projects/ping-pong/sheet-assets/1.png",
-          "alt": "Ping Pong asset 1"
+          "alt": "Ping Pong asset 1",
+          "aspectRatio": 1
         }
       ]
     },
@@ -497,14 +542,16 @@
               "src": "assets/projects/sensol-systems/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1.647059
         }
       ],
       "sheetGallery": [
         {
           "type": "image",
           "src": "assets/projects/sensol-systems/sheet-assets/1.png",
-          "alt": "Sensol Systems asset 1"
+          "alt": "Sensol Systems asset 1",
+          "aspectRatio": 1
         }
       ]
     },
@@ -526,14 +573,16 @@
               "src": "assets/projects/speaker/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
         {
           "type": "image",
           "src": "assets/projects/speaker/sheet-assets/1.png",
-          "alt": "Speaker asset 1"
+          "alt": "Speaker asset 1",
+          "aspectRatio": 1
         }
       ]
     },
@@ -555,14 +604,16 @@
               "src": "assets/projects/super-random/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
         {
           "type": "image",
           "src": "assets/projects/super-random/sheet-assets/1.png",
-          "alt": "Super Random asset 1"
+          "alt": "Super Random asset 1",
+          "aspectRatio": 1
         }
       ]
     },
@@ -584,14 +635,16 @@
               "src": "assets/projects/unfold/cover.mp4",
               "type": "video/mp4"
             }
-          ]
+          ],
+          "aspectRatio": 1
         }
       ],
       "sheetGallery": [
         {
           "type": "image",
           "src": "assets/projects/unfold/sheet-assets/1.png",
-          "alt": "Unfold asset 1"
+          "alt": "Unfold asset 1",
+          "aspectRatio": 1
         }
       ]
     }
