@@ -30,7 +30,7 @@
 }
 
 html {
-  /* scroll-behavior: smooth; */ /* Disabled - causes janky scrolling on iOS Safari */
+  scroll-behavior: smooth;
 }
 
 @font-face {

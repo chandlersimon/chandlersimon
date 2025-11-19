@@ -673,6 +673,12 @@ const initGsapEffects = () => {
   if (ScrollTrigger) {
     gsapGlobal.registerPlugin(ScrollTrigger);
     ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+
+    // Configure ScrollTrigger to not auto-refresh on resize/load events
+    ScrollTrigger.config({
+      autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+      ignoreMobileResize: true
+    });
   } else {
     console.warn('[ScrollTrigger] not found — scroll effects limited.');
   }
@@ -681,9 +687,6 @@ const initGsapEffects = () => {
 
   const cardOverviews = Array.from(document.querySelectorAll('.project-card .overview'));
   if (!cardOverviews.length) return;
-
-  // Detect if device likely has touch input (mobile/tablet)
-  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
   cardOverviews.forEach((overview) => {
     const media = overview.querySelector('img, video') || overview;
@@ -704,7 +707,7 @@ const initGsapEffects = () => {
             trigger: overview,
             start: startValue,
             end: endValue,
-            scrub: isTouchDevice ? false : 0.6  // Disable scrub on mobile for smooth scrolling
+            scrub: 0.6
           }
         }
       );
@@ -1138,8 +1141,10 @@ const init = async () => {
 
 init();
 
+let hasInitialLoadCompleted = false;
 window.addEventListener('load', () => {
-  if (window.ScrollTrigger) {
+  if (window.ScrollTrigger && !hasInitialLoadCompleted) {
+    hasInitialLoadCompleted = true;
     window.ScrollTrigger.refresh();
   }
 });
