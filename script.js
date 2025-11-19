@@ -325,49 +325,6 @@ const formatProjectIdentifier = (project = {}) => {
   return cleanedLabel || project.sheetTitle || '';
 };
 
-const directoryExistenceCache = new Map();
-
-const doesDirectoryExist = async (url) => {
-  if (directoryExistenceCache.has(url)) {
-    return directoryExistenceCache.get(url);
-  }
-  const fetchWithMethod = async (method) => {
-    try {
-      const response = await fetch(url, { method, cache: 'no-store' });
-      return response.ok || response.status === 403;
-    } catch (error) {
-      return false;
-    }
-  };
-
-  let exists = false;
-  try {
-    const headResponse = await fetch(url, { method: 'HEAD', cache: 'no-store' });
-    if (headResponse.ok || headResponse.status === 403) {
-      exists = true;
-    } else if (headResponse.status === 405) {
-      exists = await fetchWithMethod('GET');
-    }
-  } catch (error) {
-    exists = await fetchWithMethod('GET');
-  }
-
-  directoryExistenceCache.set(url, exists);
-  return exists;
-};
-
-const doesSheetAssetsDirectoryExist = async (slug) => {
-  if (!slug) return false;
-  const baseUrl = `${PROJECT_ASSETS_BASE_PATH}/${slug}/sheet-assets`;
-  const candidateUrls = [`${baseUrl}/`, baseUrl];
-  for (const url of candidateUrls) {
-    if (await doesDirectoryExist(url)) {
-      return true;
-    }
-  }
-  return false;
-};
-
 const normalizeDirectoryEntryName = (entry = '') => {
   if (!entry) return '';
   let sanitized = entry.trim();
@@ -569,13 +526,8 @@ const buildSheetAssetsFromFileMap = ({ title = '', fileMap }) => {
 };
 
 const collectSheetAssets = async (slug, title = '') => {
-  const assets = [];
   if (!slug) {
-    return assets;
-  }
-  const hasDirectory = await doesSheetAssetsDirectoryExist(slug);
-  if (!hasDirectory) {
-    return assets;
+    return [];
   }
   const fileMap = await fetchSheetAssetFileMap(slug);
   if (fileMap.size) {
@@ -584,7 +536,7 @@ const collectSheetAssets = async (slug, title = '') => {
       return mappedAssets.slice(0, MAX_SHEET_ASSETS);
     }
   }
-  return collectSheetAssetsFallback(slug, title, { skipDirectoryCheck: true });
+  return collectSheetAssetsFallback(slug, title);
 };
 
 const findAssetByExtensions = async (basePath, extensions = ASSET_EXTENSION_ORDER) => {
@@ -676,16 +628,10 @@ const collectSequentialGroupAssetsFallback = async ({ slug, index, title = '', s
   return groupedAssets;
 };
 
-const collectSheetAssetsFallback = async (slug, title = '', { skipDirectoryCheck = false } = {}) => {
+const collectSheetAssetsFallback = async (slug, title = '') => {
   const assets = [];
   if (!slug) {
     return assets;
-  }
-  if (!skipDirectoryCheck) {
-    const hasDirectory = await doesSheetAssetsDirectoryExist(slug);
-    if (!hasDirectory) {
-      return assets;
-    }
   }
   for (let index = 1; index <= MAX_SHEET_ASSETS; index += 1) {
     if (assets.length >= MAX_SHEET_ASSETS) {
