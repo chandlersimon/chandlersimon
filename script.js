@@ -20,10 +20,56 @@ const SHEET_PERCENTAGE_MIN = 1;
 const SHEET_PERCENTAGE_MAX = 100;
 const SHEET_PRELOAD_ASSET_LIMIT = 6;
 const DEFAULT_SHEET_ASPECT_RATIO = 4 / 3;
+const DEFAULT_IMAGE_OPTIMIZATION_WIDTH = 1600;
+const DEFAULT_IMAGE_QUALITY = 80;
+
+const isBrowserEnvironment = typeof window !== 'undefined';
 
 const clampNumber = (value, min, max) => {
   if (!Number.isFinite(value)) return null;
   return Math.min(Math.max(value, min), max);
+};
+
+const isLocalEnvironment = () => {
+  if (!isBrowserEnvironment || !window.location) return true;
+  const hostname = window.location.hostname || '';
+  return (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '[::1]' ||
+    window.location.protocol === 'file:'
+  );
+};
+
+const toAbsoluteUrl = (src) => {
+  if (!isBrowserEnvironment || !src) return src;
+  if (/^https?:\/\//i.test(src)) {
+    return src;
+  }
+  const origin = window.location?.origin || '';
+  if (!origin) return src;
+  if (src.startsWith('/')) {
+    return `${origin}${src}`;
+  }
+  return `${origin}/${src}`;
+};
+
+const getOptimizedImageUrl = (src, { width = DEFAULT_IMAGE_OPTIMIZATION_WIDTH, quality = DEFAULT_IMAGE_QUALITY } = {}) => {
+  if (!isBrowserEnvironment || !src || isLocalEnvironment()) {
+    return src;
+  }
+  const absoluteUrl = toAbsoluteUrl(src);
+  if (!absoluteUrl) {
+    return src;
+  }
+  const normalizedWidth = clampNumber(width, 1, 5000) || DEFAULT_IMAGE_OPTIMIZATION_WIDTH;
+  const normalizedQuality = clampNumber(quality, 1, 100) || DEFAULT_IMAGE_QUALITY;
+  const params = new URLSearchParams({
+    url: absoluteUrl,
+    w: String(Math.round(normalizedWidth)),
+    q: String(Math.round(normalizedQuality))
+  });
+  return `/_vercel/image?${params.toString()}`;
 };
 
 const getAssetPrimaryUrl = (asset = {}) => {
@@ -429,8 +475,9 @@ const ensureAssetAspectRatio = (asset) => {
   return Promise.resolve(null);
 };
 
-const preloadImageSource = (src) => {
+const preloadImageSource = (src, options) => {
   if (!src) return Promise.resolve();
+  const optimizedSrc = getOptimizedImageUrl(src, options);
   return new Promise((resolve) => {
     const img = new Image();
     const cleanup = () => {
@@ -440,7 +487,7 @@ const preloadImageSource = (src) => {
     };
     img.onload = cleanup;
     img.onerror = cleanup;
-    img.src = src;
+    img.src = optimizedSrc;
     if (img.complete) {
       cleanup();
     } else if (img.decode) {
@@ -465,7 +512,7 @@ const preloadProjectAssets = (project, { limit = SHEET_PRELOAD_ASSET_LIMIT } = {
   const preloadPromises = [];
   assets.forEach((asset) => {
     if (asset?.type === 'image' && asset?.src) {
-      preloadPromises.push(preloadImageSource(asset.src));
+      preloadPromises.push(preloadImageSource(asset.src, { width: DEFAULT_IMAGE_OPTIMIZATION_WIDTH }));
     }
     preloadPromises.push(ensureAssetAspectRatio(asset));
   });
@@ -773,7 +820,7 @@ const createCard = (project, index) => {
     }
     if (media.type === 'image' && media.src) {
       const img = document.createElement('img');
-      img.src = media.src;
+      img.src = getOptimizedImageUrl(media.src, { width: 1400 });
       img.alt = media.alt || project.alt;
       img.loading = 'lazy';
       img.decoding = 'async';
@@ -985,7 +1032,7 @@ const fillSheet = (project) => {
         figure.appendChild(video);
       } else if (asset?.src) {
         const img = document.createElement('img');
-        img.src = asset.src;
+        img.src = getOptimizedImageUrl(asset.src, { width: 1800 });
         img.alt = asset.alt || `${project.title} asset ${assetSequence + 1}`;
         img.loading = 'lazy';
         img.decoding = 'async';
