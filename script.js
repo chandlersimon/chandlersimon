@@ -673,12 +673,6 @@ const initGsapEffects = () => {
   if (ScrollTrigger) {
     gsapGlobal.registerPlugin(ScrollTrigger);
     ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-
-    // Configure ScrollTrigger to not auto-refresh on resize/load events
-    ScrollTrigger.config({
-      autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
-      ignoreMobileResize: true
-    });
   } else {
     console.warn('[ScrollTrigger] not found — scroll effects limited.');
   }
@@ -1110,17 +1104,16 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
-window.addEventListener(
-  'resize',
-  debounce(() => {
-    if (!gsapEffectsInitialized) {
-      initGsapEffects();
-      return;
-    }
-    gsapEffectsInitialized = false;
-    initGsapEffects();
-  }, 250)
-);
+
+// Debounced GSAP and media effect triggers for smoother mobile scrolling
+const debouncedGsapEffects = debounce(() => {
+  gsapEffectsInitialized = false;
+  initGsapEffects();
+  updateInlineVideos();
+}, 200);
+
+window.addEventListener('resize', debouncedGsapEffects);
+window.addEventListener('scroll', debouncedGsapEffects, { passive: true });
 
 const init = async () => {
   window.scrollTo(0, 0);
@@ -1141,10 +1134,8 @@ const init = async () => {
 
 init();
 
-let hasInitialLoadCompleted = false;
 window.addEventListener('load', () => {
-  if (window.ScrollTrigger && !hasInitialLoadCompleted) {
-    hasInitialLoadCompleted = true;
+  if (window.ScrollTrigger) {
     window.ScrollTrigger.refresh();
   }
 });
