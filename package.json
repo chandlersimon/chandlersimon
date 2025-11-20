@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run optimize-media && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "optimize-media": "node scripts/optimize-media.mjs"

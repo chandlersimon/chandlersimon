@@ -54,6 +54,12 @@ async function optimizeImages(dir) {
           const metadata = await image.metadata();
           
           if (metadata.format === 'jpeg' || metadata.format === 'jpg') {
+             const webpPath = filePath.replace(/\.[^.]+$/, '.webp');
+             if (fs.existsSync(webpPath)) {
+               // Skip if WebP already exists (assume optimized)
+               return;
+             }
+
              const buffer = await image
               .resize(1920, null, { withoutEnlargement: true })
               .jpeg({ quality: 80, mozjpeg: true })
@@ -68,6 +74,12 @@ async function optimizeImages(dir) {
              fs.writeFileSync(filePath.replace(/\.[^.]+$/, '.webp'), webpBuffer);
              
           } else if (metadata.format === 'png') {
+             const webpPath = filePath.replace(/\.[^.]+$/, '.webp');
+             if (fs.existsSync(webpPath)) {
+               // Skip if WebP already exists (assume optimized)
+               return;
+             }
+
              const buffer = await image
               .resize(1920, null, { withoutEnlargement: true })
               .png({ quality: 80, compressionLevel: 9 })
