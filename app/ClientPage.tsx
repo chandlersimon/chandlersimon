@@ -79,7 +79,7 @@ export default function ClientPage({ projects }: { projects: Project[] }) {
         document.body.classList.remove('sheet-open');
         
         // Wait for the transition to finish before unlocking the page shell
-        // The CSS transition is 220ms
+        // The CSS transition is 220ms, adding a buffer to ensure it's complete
         setTimeout(() => {
           pageShell.classList.remove('page-shell--locked');
           
@@ -97,7 +97,7 @@ export default function ClientPage({ projects }: { projects: Project[] }) {
             // Force a refresh of ScrollTrigger to ensure all positions are correct
             ScrollTrigger.refresh();
           }, 50);
-        }, 220);
+        }, 250);
       }
     }
   }, [isSheetOpen]);
