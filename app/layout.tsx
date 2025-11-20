@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     images: ["/assets/other/og.png"],
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/assets/other/favicon.svg",
   },
 };
 
