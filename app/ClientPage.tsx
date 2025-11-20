@@ -29,6 +29,7 @@ export default function ClientPage({ projects }: { projects: Project[] }) {
       gsap.to(overlayRef.current, {
         opacity: 0,
         duration: 0.3,
+        delay: 0.15,
         ease: 'power2.inOut',
         onComplete: () => {
           if (overlayRef.current) {
