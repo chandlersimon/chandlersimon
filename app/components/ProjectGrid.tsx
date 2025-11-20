@@ -3,10 +3,10 @@ import ProjectCard from './ProjectCard';
 
 interface ProjectGridProps {
   projects: Project[];
-  onProjectClick: (project: Project) => void;
+  isSheetOpen?: boolean;
 }
 
-export default function ProjectGrid({ projects, onProjectClick }: ProjectGridProps) {
+export default function ProjectGrid({ projects, isSheetOpen = false }: ProjectGridProps) {
   return (
     <div className="gallery-grid" id="galleryGrid" aria-live="polite">
       {projects.map((project, index) => (
@@ -14,7 +14,7 @@ export default function ProjectGrid({ projects, onProjectClick }: ProjectGridPro
           key={`${project.id}-${index}`} 
           project={project} 
           index={index} 
-          onClick={onProjectClick} 
+          isSheetOpen={isSheetOpen}
         />
       ))}
     </div>

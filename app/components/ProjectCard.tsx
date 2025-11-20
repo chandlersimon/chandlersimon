@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
+import Link from 'next/link';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -27,10 +28,10 @@ const MARGIN_VARIANTS = ['mt-variant-1', 'mt-variant-2', 'mt-variant-3', 'mt-var
 interface ProjectCardProps {
   project: Project;
   index: number;
-  onClick: (project: Project) => void;
+  isSheetOpen?: boolean;
 }
 
-export default function ProjectCard({ project, index, onClick }: ProjectCardProps) {
+export default function ProjectCard({ project, index, isSheetOpen = false }: ProjectCardProps) {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
 
@@ -58,13 +59,21 @@ export default function ProjectCard({ project, index, onClick }: ProjectCardProp
     const media = mediaRef.current?.querySelector('img, video');
     if (!media) return;
 
+    // If sheet is open, we don't want to run any scroll triggers or animations
+    // We can revert any existing ones to ensure clean state
+    if (isSheetOpen) {
+        return;
+    }
+
     const mm = gsap.matchMedia();
     
     mm.add("(min-width: 769px)", () => {
-        gsap.set(media, { scale: 0.4, filter: 'blur(100px)' });
-        
+        // Check if element is in viewport
+        const rect = mediaRef.current?.getBoundingClientRect();
+        const isVisible = rect && (rect.top < window.innerHeight + 100) && (rect.bottom > -100);
+
         gsap.fromTo(media, 
-            { scale: 0.4, filter: 'blur(100px)' },
+            { scale: isVisible ? 1 : 0.4, filter: isVisible ? 'blur(0px)' : 'blur(100px)' },
             {
                 scale: 1,
                 filter: 'blur(0px)',
@@ -83,16 +92,18 @@ export default function ProjectCard({ project, index, onClick }: ProjectCardProp
         gsap.set(media, { clearProps: "scale,filter,transform" });
     });
 
-    return () => mm.revert();
-  }, []);
+    return () => {
+      mm.revert();
+    };
+  }, [isSheetOpen]);
 
   return (
-    <a 
-      href={`#${project.id}`}
-      onClick={(e) => { e.preventDefault(); onClick(project); }}
+    <Link 
+      href={`/project/${project.id}`}
       className={`project-card ${marginClass}`}
       style={style}
       ref={cardRef}
+      scroll={false}
     >
       <div className="overview" ref={mediaRef}>
          {project.type === 'video' ? (
@@ -121,6 +132,6 @@ export default function ProjectCard({ project, index, onClick }: ProjectCardProp
         <span className="project-card__number">{project.label}</span>
         <p className="project-card__title">{project.title}</p>
       </div>
-    </a>
+    </Link>
   );
 }

@@ -51,7 +51,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inputMono.variable} ${nHaasGrotesk.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+      </body>
     </html>
   );
 }

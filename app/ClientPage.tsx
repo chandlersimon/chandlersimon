@@ -1,50 +1,27 @@
 'use client';
 
-import { useState, useEffect, useLayoutEffect } from 'react';
-import dynamic from 'next/dynamic';
+import { useLayoutEffect } from 'react';
 import { Project } from '@/types';
 import Header from './components/Header';
 import ProjectGrid from './components/ProjectGrid';
 import AboutSection from './components/AboutSection';
+import { usePathname } from 'next/navigation';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const ProjectSheet = dynamic(() => import('./components/ProjectSheet'), {
-  ssr: false,
-});
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export default function ClientPage({ projects }: { projects: Project[] }) {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-
-  const handleProjectClick = (project: Project) => {
-    setSelectedProject(project);
-    setIsSheetOpen(true);
-    window.history.pushState(null, '', `#${project.id}`);
-  };
-
-  const handleCloseSheet = () => {
-    setIsSheetOpen(false);
-    setTimeout(() => setSelectedProject(null), 300);
-    window.history.pushState(null, '', ' ');
-  };
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash) {
-        const project = projects.find(p => p.id === hash);
-        if (project) {
-          setSelectedProject(project);
-          setIsSheetOpen(true);
-        }
-      } else {
-        setIsSheetOpen(false);
-      }
-    };
-
-    handleHashChange();
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [projects]);
+  const pathname = usePathname();
+  // Check if we are on a project page, but ONLY if we are in the intercepted context.
+  // Actually, ClientPage is only rendered in the root layout's children slot.
+  // If we are on /project/[slug], ClientPage is NOT rendered at all in the children slot (it's replaced by app/project/[slug]/page.tsx).
+  // UNLESS interception is working.
+  // If interception works, the URL is /project/[slug], but the children slot still renders app/page.tsx (which renders ClientPage).
+  // So checking pathname here IS correct for the interception case.
+  const isSheetOpen = pathname?.startsWith('/project/') ?? false;
 
   useLayoutEffect(() => {
     const pageShell = document.querySelector('.page-shell') as HTMLElement;
@@ -54,47 +31,55 @@ export default function ClientPage({ projects }: { projects: Project[] }) {
       const scrollY = window.scrollY;
       const originY = scrollY + window.innerHeight / 2;
       
-      pageShell.style.setProperty('--page-scroll-offset', `${scrollY}px`);
-      pageShell.style.setProperty('--scale-origin-y', `${originY}px`);
-      pageShell.classList.add('page-shell--locked');
+      // Ensure body has sheet-open class for the scale effect
+      document.body.classList.add('sheet-open');
+
+      // Only set these if they haven't been set yet to avoid resetting on re-renders
+      if (!pageShell.classList.contains('page-shell--locked')) {
+        pageShell.style.setProperty('--page-scroll-offset', `${scrollY}px`);
+        pageShell.style.setProperty('--scale-origin-y', `${originY}px`);
+        pageShell.classList.add('page-shell--locked');
+      }
     } else {
       if (pageShell.classList.contains('page-shell--locked')) {
         const scrollY = parseInt(pageShell.style.getPropertyValue('--page-scroll-offset') || '0', 10);
         
-        pageShell.classList.remove('page-shell--locked');
+        // Start the transition back to normal scale/opacity
         document.body.classList.remove('sheet-open');
         
-        document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important');
-        window.scrollTo({
-          top: scrollY,
-          behavior: 'instant'
-        });
-
+        // Wait for the transition to finish before unlocking the page shell
+        // The CSS transition is 220ms
         setTimeout(() => {
-          document.documentElement.style.removeProperty('scroll-behavior');
-          pageShell.style.removeProperty('--page-scroll-offset');
-          pageShell.style.removeProperty('--scale-origin-y');
-        }, 300);
+          pageShell.classList.remove('page-shell--locked');
+          
+          document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important');
+          window.scrollTo({
+            top: scrollY,
+            behavior: 'instant'
+          });
+
+          setTimeout(() => {
+            document.documentElement.style.removeProperty('scroll-behavior');
+            pageShell.style.removeProperty('--page-scroll-offset');
+            pageShell.style.removeProperty('--scale-origin-y');
+            
+            // Force a refresh of ScrollTrigger to ensure all positions are correct
+            ScrollTrigger.refresh();
+          }, 50);
+        }, 220);
       }
     }
   }, [isSheetOpen]);
 
   return (
-    <>
-      <div className="page-shell">
-        <Header />
-        <main>
-          <section className="projects" id="projects">
-            <ProjectGrid projects={projects} onProjectClick={handleProjectClick} />
-          </section>
-          <AboutSection />
-        </main>
-      </div>
-      <ProjectSheet 
-        project={selectedProject} 
-        isOpen={isSheetOpen} 
-        onClose={handleCloseSheet} 
-      />
-    </>
+    <div className="page-shell">
+      <Header />
+      <main>
+        <section className="projects" id="projects">
+          <ProjectGrid projects={projects} isSheetOpen={isSheetOpen} />
+        </section>
+        <AboutSection />
+      </main>
+    </div>
   );
 }
