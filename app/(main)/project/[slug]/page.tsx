@@ -48,7 +48,6 @@ export default async function ProjectPage({ params }: Props) {
       height: 'auto',
       maxHeight: 'none',
       overflow: 'visible',
-      paddingTop: '4rem'
     }}>
       <Link href="/" className="project-sheet__close" aria-label="Back to projects" style={{ position: 'fixed', zIndex: 50 }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
