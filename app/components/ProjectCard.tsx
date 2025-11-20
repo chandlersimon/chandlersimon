@@ -1,7 +1,7 @@
 'use client';
 
 import { Project } from '@/types';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Image from 'next/image';
@@ -34,6 +34,8 @@ interface ProjectCardProps {
 export default function ProjectCard({ project, index, isSheetOpen = false }: ProjectCardProps) {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const pattern = GRID_PATTERN[index % GRID_PATTERN.length];
   const block = Math.floor(index / GRID_PATTERN.length);
@@ -54,6 +56,13 @@ export default function ProjectCard({ project, index, isSheetOpen = false }: Pro
     const choiceIndex = (index * 7) % MARGIN_VARIANTS.length;
     marginClass = MARGIN_VARIANTS[choiceIndex];
   }
+
+  // Check video ready state on mount
+  useEffect(() => {
+    if (videoRef.current && videoRef.current.readyState >= 3) {
+      setIsLoaded(true);
+    }
+  }, []);
 
   useEffect(() => {
     const media = mediaRef.current?.querySelector('img, video');
@@ -105,15 +114,20 @@ export default function ProjectCard({ project, index, isSheetOpen = false }: Pro
       ref={cardRef}
       scroll={false}
     >
-      <div className="overview" ref={mediaRef}>
+      <div className={`overview ${!isLoaded ? 'is-loading' : ''}`} ref={mediaRef}>
          {project.type === 'video' ? (
              <video 
+                ref={videoRef}
                 src={project.cover} 
                 autoPlay 
                 muted 
                 loop 
                 playsInline 
-                className="w-full h-full object-cover"
+                preload="auto"
+                onCanPlay={() => setIsLoaded(true)}
+                onLoadedData={() => setIsLoaded(true)}
+                onPlaying={() => setIsLoaded(true)}
+                className={`w-full h-full object-cover transition-opacity duration-150 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                 style={{ width: '100%', height: 'auto' }}
              />
          ) : (
@@ -123,7 +137,8 @@ export default function ProjectCard({ project, index, isSheetOpen = false }: Pro
                 width={0}
                 height={0}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="w-full h-full object-cover"
+                onLoad={() => setIsLoaded(true)}
+                className={`w-full h-full object-cover transition-opacity duration-150 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
                 style={{ width: '100%', height: 'auto' }}
              />
          )}

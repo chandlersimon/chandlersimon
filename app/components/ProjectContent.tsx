@@ -1,7 +1,7 @@
 'use client';
 
 import { Project, Asset } from '@/types';
-import { useEffect, useState } from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { attachLayoutToAsset, buildSheetRows } from '@/app/lib/sheetUtils';
 
@@ -11,19 +11,14 @@ interface ProjectContentProps {
 }
 
 export default function ProjectContent({ project, isStandalone = false }: ProjectContentProps) {
-  const [rows, setRows] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (project) {
-      const assets = project.sheetGallery || project.gallery || [];
-      if (assets.length) {
-        const decoratedAssets = assets.map((asset) => attachLayoutToAsset({ ...asset }));
-        const galleryRows = buildSheetRows(decoratedAssets);
-        setRows(galleryRows);
-      } else {
-        setRows([]);
-      }
+  const rows = useMemo(() => {
+    if (!project) return [];
+    const assets = project.sheetGallery || project.gallery || [];
+    if (assets.length) {
+      const decoratedAssets = assets.map((asset) => attachLayoutToAsset({ ...asset }));
+      return buildSheetRows(decoratedAssets);
     }
+    return [];
   }, [project]);
 
   const contentStyle = isStandalone ? {
@@ -97,6 +92,13 @@ export default function ProjectContent({ project, isStandalone = false }: Projec
 
 const SheetAsset = ({ asset, widthValue, aspectRatio }: { asset: Asset, widthValue: number, aspectRatio: number }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current && videoRef.current.readyState >= 3) {
+      setIsLoaded(true);
+    }
+  }, []);
 
   return (
     <figure 
@@ -108,6 +110,7 @@ const SheetAsset = ({ asset, widthValue, aspectRatio }: { asset: Asset, widthVal
     >
         {asset.type === 'video' ? (
             <video
+                ref={videoRef}
                 src={asset.sources?.[0]?.src || asset.src}
                 poster={asset.poster}
                 autoPlay={asset.autoplay}
@@ -115,8 +118,11 @@ const SheetAsset = ({ asset, widthValue, aspectRatio }: { asset: Asset, widthVal
                 muted={asset.muted}
                 playsInline
                 controls={asset.controls}
+                preload="auto"
                 className="w-full h-full object-cover"
                 onLoadedData={() => setIsLoaded(true)}
+                onCanPlay={() => setIsLoaded(true)}
+                onPlaying={() => setIsLoaded(true)}
             />
         ) : (
             <Image
@@ -126,6 +132,7 @@ const SheetAsset = ({ asset, widthValue, aspectRatio }: { asset: Asset, widthVal
                 height={900}
                 className="w-full h-full object-cover"
                 onLoad={() => setIsLoaded(true)}
+                onError={() => setIsLoaded(true)}
             />
         )}
     </figure>

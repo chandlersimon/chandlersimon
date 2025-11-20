@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutEffect } from 'react';
+import { useLayoutEffect, useEffect, useRef } from 'react';
 import { Project } from '@/types';
 import Header from './components/Header';
 import ProjectGrid from './components/ProjectGrid';
@@ -15,6 +15,7 @@ if (typeof window !== 'undefined') {
 
 export default function ClientPage({ projects }: { projects: Project[] }) {
   const pathname = usePathname();
+  const overlayRef = useRef<HTMLDivElement>(null);
   // Check if we are on a project page, but ONLY if we are in the intercepted context.
   // Actually, ClientPage is only rendered in the root layout's children slot.
   // If we are on /project/[slug], ClientPage is NOT rendered at all in the children slot (it's replaced by app/project/[slug]/page.tsx).
@@ -22,6 +23,35 @@ export default function ClientPage({ projects }: { projects: Project[] }) {
   // If interception works, the URL is /project/[slug], but the children slot still renders app/page.tsx (which renders ClientPage).
   // So checking pathname here IS correct for the interception case.
   const isSheetOpen = pathname?.startsWith('/project/') ?? false;
+
+  useLayoutEffect(() => {
+    if (overlayRef.current && !isSheetOpen) {
+      gsap.to(overlayRef.current, {
+        opacity: 0,
+        duration: 0.3,
+        ease: 'power2.inOut',
+        onComplete: () => {
+          if (overlayRef.current) {
+            overlayRef.current.style.display = 'none';
+          }
+        }
+      });
+    } else if (overlayRef.current && isSheetOpen) {
+      // If we somehow mount with the sheet open (unlikely but possible), hide immediately
+      overlayRef.current.style.display = 'none';
+    }
+  }, []);
+
+  // Force refresh ScrollTrigger on mount to ensure correct positions when navigating back to home
+  useEffect(() => {
+    if (!isSheetOpen) {
+      // Small delay to ensure DOM is ready
+      const timer = setTimeout(() => {
+        ScrollTrigger.refresh();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isSheetOpen]);
 
   useLayoutEffect(() => {
     const pageShell = document.querySelector('.page-shell') as HTMLElement;
@@ -73,6 +103,10 @@ export default function ClientPage({ projects }: { projects: Project[] }) {
 
   return (
     <div className="page-shell">
+      <div 
+        ref={overlayRef}
+        className="fixed inset-0 z-[9999] bg-[#e5e5e5] pointer-events-none"
+      />
       <Header />
       <main>
         <section className="projects" id="projects">

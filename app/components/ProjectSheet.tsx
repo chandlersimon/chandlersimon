@@ -17,6 +17,7 @@ export default function ProjectSheet({ project, isOpen, onClose, onClosed }: Pro
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
+    let scaleTimer: NodeJS.Timeout;
 
     if (isOpen) {
       setIsVisible(true);
@@ -30,13 +31,21 @@ export default function ProjectSheet({ project, isOpen, onClose, onClosed }: Pro
     } else {
       setIsActive(false);
       
+      // Delay the home page entry animation slightly so the sheet starts moving first
+      scaleTimer = setTimeout(() => {
+        document.body.classList.remove('sheet-open');
+      }, 100);
+      
       timer = setTimeout(() => {
         setIsVisible(false);
         if (onClosed) onClosed();
       }, 360);
     }
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(scaleTimer);
+    };
   }, [isOpen, onClosed]);
 
   if (!project && !isVisible) return null;
