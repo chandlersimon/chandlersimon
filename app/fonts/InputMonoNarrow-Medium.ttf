@@ -1,0 +1,9 @@
+  import Image from 'next/image';
+
+  <Image
+    src="/assets/other/profile.JPG"
+    alt="Portrait of Chandler Simon"
+    width={320}
+    height={320}
+    priority // Use priority for above-the-fold images
+  />
