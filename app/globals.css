@@ -419,12 +419,14 @@ main {
   }
 
   .project-card .overview {
-    aspect-ratio: auto;
+    aspect-ratio: unset !important;
+    height: auto !important;
   }
 
   .project-card .overview img,
   .project-card .overview video {
     height: auto !important;
+    width: 100% !important;
     position: relative;
   }
 }

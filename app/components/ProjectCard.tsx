@@ -97,6 +97,7 @@ export default function ProjectCard({ project, index, onClick }: ProjectCardProp
                 loop 
                 playsInline 
                 className="w-full h-full object-cover"
+                style={{ width: '100%', height: 'auto' }}
              />
          ) : (
              <Image 
