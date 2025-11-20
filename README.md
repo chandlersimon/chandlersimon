@@ -109,6 +109,8 @@ module.exports = {
 };
 ```
 
+<!-- Trigger Vercel Redeploy -->
+
 ### Conclusion
 
 By following these steps, you can significantly improve the performance of your static website on Vercel. Focus on optimizing images and videos, minifying your code, and ensuring smooth animations. Regularly test your site using tools like Google Lighthouse to identify further areas for improvement.
