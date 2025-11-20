@@ -32,18 +32,39 @@ export function formatDetailValue(value: string = '') {
   return value.replace(/,\s*/g, ',\n').trim();
 }
 
+function ensureLeadingSlash(path: string): string {
+  if (!path || typeof path !== 'string') return path;
+  if (path.startsWith('http') || path.startsWith('/')) return path;
+  return `/${path}`;
+}
+
 export function normalizeProject(config: any, index: number): Project {
   const fallbackSlug = config.title ? slugify(config.title) : `project-${index + 1}`;
   const slug = config.slug ? slugify(config.slug) : fallbackSlug;
   const title = config.title || titleize(slug);
   const label = config.label || `(${String(index + 1).padStart(2, '0')})`;
-  const gallery = Array.isArray(config.gallery) ? config.gallery : [];
-  const sheetGallery = Array.isArray(config.sheetGallery) ? config.sheetGallery : [];
+  
+  const processGalleryItem = (item: any) => {
+    const newItem = { ...item };
+    if (newItem.src) newItem.src = ensureLeadingSlash(newItem.src);
+    if (newItem.poster) newItem.poster = ensureLeadingSlash(newItem.poster);
+    if (Array.isArray(newItem.sources)) {
+      newItem.sources = newItem.sources.map((source: any) => ({
+        ...source,
+        src: ensureLeadingSlash(source.src)
+      }));
+    }
+    return newItem;
+  };
+
+  const gallery = Array.isArray(config.gallery) ? config.gallery.map(processGalleryItem) : [];
+  const sheetGallery = Array.isArray(config.sheetGallery) ? config.sheetGallery.map(processGalleryItem) : [];
   
   // Find cover
   const firstImage = gallery.find((item: any) => item?.type === 'image');
   const firstVideoPoster = gallery.find((item: any) => item?.poster)?.poster;
-  const cover = config.cover || firstImage?.src || firstVideoPoster || '';
+  const rawCover = config.cover || firstImage?.src || firstVideoPoster || '';
+  const cover = ensureLeadingSlash(rawCover);
 
   const detailText = typeof config.detailText === 'string' ? config.detailText : '';
   const detailSections = parseDetailSections(detailText);

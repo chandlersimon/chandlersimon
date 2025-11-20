@@ -8,7 +8,7 @@ const config: Config = {
     extend: {
       colors: {
         'page-bg': '#f5f5f5',
-        'card-bg': '#ffffff',
+        'card-bg': '#f5f5f5',
         'card-border': '#e2e8f0',
         'text-body': '#000000',
         'text-muted': '#000000',
