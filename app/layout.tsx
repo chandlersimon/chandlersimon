@@ -1,5 +1,18 @@
 import type { Metadata } from "next";
+import localFont from 'next/font/local';
 import "./globals.css";
+
+const inputMono = localFont({
+  src: './fonts/InputMonoNarrow-Medium.ttf',
+  variable: '--font-input-mono',
+  display: 'swap',
+});
+
+const nHaasGrotesk = localFont({
+  src: './fonts/NHaasGroteskDSPro-65Md.otf',
+  variable: '--font-nhaas',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: "Chandler Simon",
@@ -37,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inputMono.variable} ${nHaasGrotesk.variable}`}>
       <body>{children}</body>
     </html>
   );

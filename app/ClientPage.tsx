@@ -1,11 +1,15 @@
 'use client';
 
 import { useState, useEffect, useLayoutEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { Project } from '@/types';
 import Header from './components/Header';
 import ProjectGrid from './components/ProjectGrid';
 import AboutSection from './components/AboutSection';
-import ProjectSheet from './components/ProjectSheet';
+
+const ProjectSheet = dynamic(() => import('./components/ProjectSheet'), {
+  ssr: false,
+});
 
 export default function ClientPage({ projects }: { projects: Project[] }) {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
