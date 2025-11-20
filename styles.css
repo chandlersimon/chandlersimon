@@ -33,14 +33,6 @@ html {
   scroll-behavior: smooth;
 }
 
-@font-face {
-  font-family: 'Franchise';
-  src: url('assets/other/Franchise-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
 * {
   box-sizing: border-box;
 }
