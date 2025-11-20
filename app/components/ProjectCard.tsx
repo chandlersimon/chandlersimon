@@ -59,22 +59,27 @@ export default function ProjectCard({ project, index, onClick }: ProjectCardProp
     if (!media) return;
 
     const ctx = gsap.context(() => {
-        gsap.set(media, { scale: 0.4, filter: 'blur(100px)' });
+        // Only run animation on screens larger than 768px (typical mobile breakpoint)
+        const mm = gsap.matchMedia();
         
-        gsap.fromTo(media, 
-            { scale: 0.4, filter: 'blur(100px)' },
-            {
-                scale: 1,
-                filter: 'blur(0px)',
-                ease: 'power3.out',
-                scrollTrigger: {
-                    trigger: mediaRef.current,
-                    start: 'top bottom',
-                    end: 'top 40%',
-                    scrub: 0.6
+        mm.add("(min-width: 769px)", () => {
+            gsap.set(media, { scale: 0.4, filter: 'blur(100px)' });
+            
+            gsap.fromTo(media, 
+                { scale: 0.4, filter: 'blur(100px)' },
+                {
+                    scale: 1,
+                    filter: 'blur(0px)',
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: mediaRef.current,
+                        start: 'top bottom',
+                        end: 'top 40%',
+                        scrub: 0.6
+                    }
                 }
-            }
-        );
+            );
+        });
     }, cardRef);
 
     return () => ctx.revert();
