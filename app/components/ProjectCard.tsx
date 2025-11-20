@@ -102,9 +102,11 @@ export default function ProjectCard({ project, index, onClick }: ProjectCardProp
              <Image 
                 src={project.cover || ''} 
                 alt={project.alt || ''} 
-                width={800} 
-                height={600}
+                width={0}
+                height={0}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="w-full h-full object-cover"
+                style={{ width: '100%', height: 'auto' }}
              />
          )}
       </div>

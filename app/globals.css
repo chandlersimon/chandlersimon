@@ -368,7 +368,7 @@ main {
 .project-card .overview img,
 .project-card .overview video {
   width: 100%;
-  height: 100%;
+  height: 100% !important;
   object-fit: cover;
   filter: none;
   transform-origin: bottom center;
@@ -424,7 +424,7 @@ main {
 
   .project-card .overview img,
   .project-card .overview video {
-    height: auto;
+    height: auto !important;
     position: relative;
   }
 }
