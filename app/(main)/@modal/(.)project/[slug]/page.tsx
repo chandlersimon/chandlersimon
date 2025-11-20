@@ -2,8 +2,12 @@ import { getAllProjects } from '@/app/lib/projects';
 import { notFound } from 'next/navigation';
 import ProjectModal from '@/app/components/ProjectModal';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+export async function generateStaticParams() {
+  const projects = await getAllProjects();
+  return projects.map((project) => ({
+    slug: project.id,
+  }));
+}
 
 export default async function InterceptedProjectPage({ params }: { params: { slug: string } }) {
   const projects = await getAllProjects();

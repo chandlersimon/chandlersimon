@@ -130,6 +130,7 @@ const SheetAsset = ({ asset, widthValue, aspectRatio }: { asset: Asset, widthVal
                 alt={asset.alt || ''}
                 width={1200}
                 height={900}
+                sizes={`(max-width: 640px) 100vw, ${widthValue}vw`}
                 className="w-full h-full object-cover"
                 onLoad={() => setIsLoaded(true)}
                 onError={() => setIsLoaded(true)}
