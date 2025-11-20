@@ -121,7 +121,7 @@ export default function ProjectSheet({ project, isOpen, onClose }: ProjectSheetP
         <div className="project-sheet__backdrop" onClick={onClose}></div>
         <div className="project-sheet__panel" role="dialog" aria-modal="true">
             <button className="project-sheet__close" type="button" aria-label="Close project" onClick={onClose}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M24 3.32784L15.3278 12L24 20.6722L20.6722 24L12 15.3278L3.32784 24L0 20.6722L8.67216 12L0 3.32784L3.32784 0L12 8.67216L20.6722 0L24 3.32784Z" fill="black"/>
               </svg>
             </button>

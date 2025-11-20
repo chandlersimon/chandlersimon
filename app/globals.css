@@ -567,6 +567,9 @@ main {
   right: clamp(1rem, 2vw, 1.75rem);
   z-index: 2;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .project-sheet__content {
