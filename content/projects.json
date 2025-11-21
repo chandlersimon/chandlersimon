@@ -465,21 +465,26 @@
           "autoplay": true,
           "loop": true,
           "muted": true,
-          "sources": [
-            {
-              "src": "assets/projects/internet-garden/cover.mp4",
-              "type": "video/mp4"
-            }
-          ],
+          "src": "assets/projects/internet-garden/cover.mp4",
           "aspectRatio": 1
         }
       ],
       "sheetGallery": [
         {
-          "type": "image",
-          "src": "assets/projects/internet-garden/sheet-assets/1.png",
-          "alt": "Internet Garden asset 1",
-          "aspectRatio": 1
+          "type": "video",
+          "autoplay": true,
+          "loop": true,
+          "muted": true,
+          "src": "assets/projects/internet-garden/sheet-assets/1.mp4",
+          "aspectRatio": 1.777778
+        },
+        {
+          "type": "video",
+          "autoplay": true,
+          "loop": true,
+          "muted": true,
+          "src": "assets/projects/internet-garden/sheet-assets/2.mp4",
+          "aspectRatio": 1.777778
         }
       ]
     },
@@ -622,17 +627,37 @@
       ],
       "sheetGallery": [
         {
-          "type": "image",
-          "src": "assets/projects/super-random/sheet-assets/1.png",
-          "alt": "Super Random asset 1",
-          "aspectRatio": 1
+          "type": "video",
+          "autoplay": true,
+          "loop": true,
+          "muted": true,
+          "sources": [
+            {
+              "src": "assets/projects/internet-garden/sheet-assets/1.mp4",
+              "type": "video/mp4"
+            }
+          ],
+          "aspectRatio": 1.777778
+        },
+        {
+          "type": "video",
+          "autoplay": true,
+          "loop": true,
+          "muted": true,
+          "sources": [
+            {
+              "src": "assets/projects/internet-garden/sheet-assets/2.mp4",
+              "type": "video/mp4"
+            }
+          ],
+          "aspectRatio": 1.777778
         }
       ]
     },
     {
       "id": "unfold",
       "title": "Unfold",
-      "description": "Coming soon.",
+      "description": "Unfold, an AR experience that complements human storytelling through subtle gestures.Technology is changing how stories are told. Storytelling is fundamental to how we express ourselves, learn about others, and imagine together. Unfold embraces improvisational commands that support natural tendencies to use gestures when storytelling.",
       "slug": "unfold",
       "alt": "Unfold asset",
       "cover": "assets/projects/unfold/cover.mp4",
